@@ -1,0 +1,237 @@
+{% load static %}
+{%load staticfiles%}
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+body{
+    background-color: blanchedalmond;
+}  
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}   
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 100px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+img.avatar1 {
+    margin: 0px;
+    width: 4%;
+    border-radius: 300px 300px 300px 300px;
+  }
+
+.contain{
+  width: 40%;
+  text-align: right;
+  align-items: center;
+}
+.play{
+   width: 60px;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%,-50%);
+   cursor: pointer;
+}
+img:before {
+    background-image: url(ishere.jpg);
+}
+.playpic{
+   height: 0.8cm;
+   width: 15%;
+   cursor: pointer;
+}
+/*The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 50%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+  font-style: italic;
+  font-weight: bold;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.vidplay{
+    width: 60%;
+    position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%,-50%);
+}
+video:focus{
+    outline: none;
+}
+.close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    cursor: pointer;
+}
+.image-thumbail{
+    height: 200px;
+    width: 100%;
+}
+</style>
+</head>
+<body class="m-5">   
+<div style="text-align: right;">
+    <div style="text-align: left;">
+    <label>
+    <button type="submit"><a href="/home"> Home</a></button>
+    <button type="submit"><a href="/database"> upload video</a></button>
+    <button type="submit"><a href="/contact"> contact us</a></button>
+    </label>
+    <label style="text-align:center;
+    font-size: 30px;
+    font-style: italic;">
+    welcome
+    </label>
+    <label style="text-align: right;
+    margin-right: 0px;">
+    {% if user.is_authenticated %}
+       <img src="{{ user.profile.profile_image.url }}" alt="{{user.username}} no photo" class="avatar1" width: 100px;
+        height: 90px;
+        left: 1px;
+        top: 10%;>
+        <span >{{ request.user }} 
+        <button onclick="document.getElementById('id0123').style.display='block'" style="width:auto;">User profile</button>
+        <button type="submit"><a href="{% url 'logout' %}"> logout</a></button>
+    {%else%}
+        <button type="submit"><a href="/signin"> login</a></button>
+        <button type="submit"><a href="/register"> signup</a></button>
+    {%endif%}  
+    </label> 
+    </div> 
+</div>   <br><br> 
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+
+                <div class="card" >
+                    
+                    <div class="card-header">
+                        <div style="font-size: 20px;
+                        font-weight: bold;">the platform for your favorite nested films and shows. 
+                            Fictional movies within movies? </div>
+                    </div>
+                </div>
+
+            </div>    
+                <div class="col-md-9">
+                    <div class="row">
+                       {% for x in video %}
+                       <div class="col-md-4">
+                          <div class="card my-2">
+                           <img  class="image-thumbail" src="{{x.video_backgraound_image.url }}" 
+                            onclick="videoplayi('{{x.video}}')">
+                            <div class="card-body">
+                              <p class="card-text">{{x.title}}</p>
+                              <p class="card-text">{{x.description}}</p>
+                            </div>
+                            <a class="btn btn-outline-dark btn-sm m-1" href="{{x.movie_trailer_link}}">view</a>
+                          </div>
+                       </div>
+                       {%endfor%}
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="vidplay" id="videoplay">
+        <video width="100%" controls autoplay id="myvideo">
+            <source src="../USER_FAVORITE_VIDEO/Butera_Knowless_-_Bafana_Bafana_Feat_BullDogg_&_Fireman_(Official_Music_Video)(1080p).mp4" type="video/mp4">
+        </video>
+        <img src="../media/photoes/images.png" class="close" onclick="stopVideo()">
+    </div>
+    <script>
+        var videoplay=document.getElementById("videoplay");
+        var myvideo=document.getElementById("myvideo");
+        function stopVideo(){
+            videoplay.style.display="none";
+        }
+        function videoplayi(file){
+            myvideo.src=file;
+            videoplay.style="block";
+        }
+    </script>
+  
+<div id="id0123" class="modal">
+    <div class="modal-content animate">
+        <div class="container">
+            <div class="imgcontainer">
+                  <span onclick="document.getElementById('id0123').style.display='none'" class="close" title="Close Modal">&times;</span>
+                  <img src="{{ user.profile.profile_image.url }}" alt="{{user.username}} no photo" class="avatar">
+                </div>
+        {% block content %}
+        <h1>   
+        Your profile<br>
+        </h1>
+        <table style="border:0px solid;">
+            <tr style="border:0px solid;">
+                <td style="border:0px solid;">Username:<br>
+                    First Name:<br>
+                    Last Name:<br>
+                    Email: <br>
+                    Gender:<br>
+                    Age:</td>
+                <td style="border:0px solid;">{{user.username}}
+                    <br>{{user.first_name}}<br>
+                    {{user.last_name}}<br>
+                    {{user.email}}<br>
+                    {{ user.profile.gender }}<br> 
+                    {{ user.profile.age }}<br>
+                </td> 
+            </tr>    
+        </table>
+        <div class="link">
+        <button type="submit"><a href="/home"> home</a></button></br>
+        <button type="submit"><a href="/profile"> Edit profile</a></button><br>
+        </div>
+        {% endblock content %}
+        </div>
+    </div>
+</div>  
+<footer style="text-align: center;">@2022 Movies Anywhere. All Rights Reserved</footer>
+</body>
+</html>
